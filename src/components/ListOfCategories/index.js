@@ -2,19 +2,27 @@ import React, { useEffect, useState } from 'react'
 import { Category } from '../Category'
 import { List, Item } from './styles'
 
-export const ListOfCategories = () => {
+function useCategoriesData() {
+  const [loading, setLoading] = useState(false)
   const [categories, setCategories] = useState([])
-  const [showFixed, setShowFixed] = useState(false)
   useEffect(() => {
+    setLoading(true)
     try {
       window
         .fetch('https://petgram-server-cjy-7z0oguq47.vercel.app/categories')
         .then((response) => response.json())
         .then((data) => setCategories(data))
+        .then(setLoading(false))
     } catch (err) {
       console.log(err)
     }
   }, [])
+  return { categories, loading }
+}
+
+export const ListOfCategories = () => {
+  const { categories, loading } = useCategoriesData()
+  const [showFixed, setShowFixed] = useState(false)
 
   useEffect(() => {
     const onScroll = (e) => {
@@ -28,7 +36,7 @@ export const ListOfCategories = () => {
   }, [showFixed])
 
   const renderList = (fixed) => (
-    <List className={fixed ? 'fixed' : ''}>
+    <List fixed={fixed}>
       {categories.map((category) => (
         <Item key={category}>
           <Category {...category} />
@@ -36,6 +44,10 @@ export const ListOfCategories = () => {
       ))}
     </List>
   )
+
+  if (loading) {
+    return 'Cargando...'
+  }
 
   return (
     <>
