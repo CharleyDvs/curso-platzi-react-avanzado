@@ -11,6 +11,10 @@ const Provider = ({ children }) => {
     activateAuth: (token) => {
       window.sessionStorage.setItem('token', token)
       setIsAuth(true)
+    },
+    removeAuth: () => {
+      setIsAuth(false)
+      window.sessionStorage.removeItem('token')
     }
   }
   return <Context.Provider value={value}>{children}</Context.Provider>
